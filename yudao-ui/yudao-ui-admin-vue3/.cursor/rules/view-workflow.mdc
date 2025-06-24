@@ -1,0 +1,70 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# View & Page Workflow
+
+This project follows a consistent pattern for implementing views and pages, which helps maintain code organization and predictability.
+
+## View Organization
+
+- Views are organized in [src/views/](mdc:src/views/) by business domain
+- Each domain has its own directory structure reflecting the application's functionality
+- Common pages like Login, Home, and Error have their own directories
+
+## Page Structure Patterns
+
+Most CRUD (Create, Read, Update, Delete) pages follow this pattern:
+
+1. **Index/List Page**
+   - Contains a search form at the top
+   - Displays a data table with action buttons
+   - Includes functionality for creating, viewing, editing, and deleting records
+
+2. **Form Page/Component**
+   - Used for creating and editing data
+   - Usually implemented as a dialog or drawer
+   - Contains form validation and submission logic
+
+3. **Detail Page/Component**
+   - Used for displaying detailed information about a record
+   - Often uses the Descriptions component for layout
+
+## Routing
+
+- Routes are defined in [src/router/modules/](mdc:src/router/modules/)
+- Each business domain typically has its own route module
+- Routes use lazy-loading for better performance
+
+## Common View Patterns
+
+```vue
+<!-- Example list page structure -->
+<template>
+  <ContentWrap>
+    <!-- Search Form -->
+    <Form :schema="searchSchema" @search="handleSearch" />
+    
+    <!-- Action Buttons -->
+    <div class="mb-10px">
+      <XButton @click="handleCreate">新增</XButton>
+    </div>
+    
+    <!-- Data Table -->
+    <Table 
+      :columns="columns" 
+      :data="list" 
+      :loading="loading"
+      @page-change="handlePageChange"
+    />
+    
+    <!-- Dialog Forms -->
+    <Dialog v-model="dialogVisible" :title="dialogTitle">
+      <Form :schema="formSchema" @submit="handleSubmit" />
+    </Dialog>
+  </ContentWrap>
+</template>
+```
+
+When creating new views, follow these established patterns to maintain consistency throughout the application.

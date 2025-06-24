@@ -1,0 +1,55 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Component Usage Guide
+
+This project uses a combination of Element Plus components and custom components to build the UI. Understanding how to use these components correctly is essential for maintaining consistency.
+
+## Component Organization
+
+- Global components are registered in [src/components/index.ts](mdc:src/components/index.ts)
+- Each component has its own directory with a clear structure:
+  - Main component file (e.g., `index.vue`)
+  - Types or interfaces (if needed)
+  - Subcomponents (if applicable)
+  - Style files
+
+## Key Component Categories
+
+1. **Layout Components**
+   - [ContentWrap](mdc:src/components/ContentWrap/) - Wrapper for page content with consistent padding/margins
+   - [Card](mdc:src/components/Card/) - Content container with title and actions
+
+2. **Data Input Components**
+   - [Form](mdc:src/components/Form/) - Enhanced form components
+   - [ColorInput](mdc:src/components/ColorInput/) - Color selector
+   - [Crontab](mdc:src/components/Crontab/) - Cron expression editor
+
+3. **Data Display Components**
+   - [Table](mdc:src/components/Table/) - Enhanced data table with pagination
+   - [Descriptions](mdc:src/components/Descriptions/) - Detail information display
+   - [Echart](mdc:src/components/Echart/) - Chart components
+
+4. **Special Components**
+   - [Editor](mdc:src/components/Editor/) - Rich text editor
+   - [Cropper](mdc:src/components/Cropper/) - Image cropping
+   - [bpmnProcessDesigner](mdc:src/components/bpmnProcessDesigner/) - Business process designer
+
+## Using Components
+
+```vue
+<template>
+  <ContentWrap>
+    <Form :schema="formSchema" @register="registerForm" />
+    <Table :columns="columns" :data="tableData" />
+  </ContentWrap>
+</template>
+```
+
+When creating new components:
+- Follow the existing component structure and naming conventions
+- Use TypeScript for proper type definitions
+- Leverage Element Plus components where possible rather than recreating functionality
+- Document props, events, and slots for component reusability

@@ -1,0 +1,108 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# State Management with Pinia
+
+This project uses Pinia for state management, providing a predictable way to manage application state and share data between components.
+
+## Store Organization
+
+- Stores are organized in [src/store/modules/](mdc:src/store/modules/)
+- Main store setup is in [src/store/index.ts](mdc:src/store/index.ts)
+- The project uses `pinia-plugin-persistedstate` for persisting state
+
+## Common Store Modules
+
+1. **App Store**
+   - Manages application-wide settings like theme, sidebar state, etc.
+   - Located at [src/store/modules/app.ts](mdc:src/store/modules/app.ts)
+
+2. **User Store**
+   - Manages user authentication, permissions, and profile
+   - Located at [src/store/modules/user.ts](mdc:src/store/modules/user.ts)
+
+3. **Permission Store**
+   - Manages route permissions and dynamic routing
+   - Located at [src/store/modules/permission.ts](mdc:src/store/modules/permission.ts)
+
+## Store Pattern
+
+Stores follow this consistent pattern:
+
+```typescript
+// Define state interface
+export interface UserState {
+  token: string
+  userInfo: Nullable<UserInfo>
+  // ...
+}
+
+// Create the store
+export const useUserStore = defineStore({
+  id: 'user',
+  // State
+  state: (): UserState => ({
+    token: getToken() || '',
+    userInfo: null,
+    // ...
+  }),
+  // Getters
+  getters: {
+    getToken(): string {
+      return this.token
+    },
+    // ...
+  },
+  // Actions
+  actions: {
+    setToken(token: string) {
+      this.token = token
+      setToken(token)
+    },
+    // Async actions
+    async login(loginForm: LoginForm) {
+      try {
+        const res = await loginApi(loginForm)
+        // ...
+      } catch (error) {
+        // ...
+      }
+    },
+    // ...
+  },
+  // Optional persistence
+  persist: {
+    key: 'user',
+    storage: localStorage,
+    paths: ['token']
+  }
+})
+```
+
+## Using Stores in Components
+
+```vue
+<script setup lang="ts">
+import { useUserStore } from '@/store/modules/user'
+
+// Access the store
+const userStore = useUserStore()
+
+// Use state
+const username = computed(() => userStore.userInfo?.username)
+
+// Call actions
+const handleLogout = async () => {
+  await userStore.logout()
+  // ...
+}
+</script>
+```
+
+When creating new stores:
+- Follow the existing pattern with state, getters, and actions
+- Use TypeScript interfaces for proper type definitions
+- Consider which state needs to be persisted
+- Optimize for reusability and readability

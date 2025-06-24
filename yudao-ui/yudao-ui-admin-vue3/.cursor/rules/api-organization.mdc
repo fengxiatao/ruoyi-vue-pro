@@ -1,0 +1,37 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# API Organization
+
+The API modules in this project follow a domain-driven organization pattern, mirroring the business domains in the application.
+
+## API Structure
+
+- API modules are located in [src/api/](mdc:src/api/) and divided by business domain
+- Each domain has its own directory (e.g., system, crm, erp, mall, pay, etc.)
+- Each API module typically exports functions that make HTTP requests to the backend
+
+## Common API Patterns
+
+- API functions use the axios HTTP client, configured in [src/utils/request.ts](mdc:src/utils/request.ts)
+- API endpoints follow RESTful conventions where possible
+- Pagination, sorting, and filtering follow consistent patterns across modules
+- Each domain directory contains modules for different entities within that domain
+
+## API Usage Example
+
+```typescript
+// Import an API module
+import { getList, getDetail, create, update, remove } from '@/api/system/user'
+
+// Using the API in a component
+const loadUsers = async () => {
+  const { list, total } = await getList(queryParams)
+  userData.value = list
+  totalCount.value = total
+}
+```
+
+When adding new API endpoints, follow the existing patterns in similar modules to maintain consistency throughout the codebase.

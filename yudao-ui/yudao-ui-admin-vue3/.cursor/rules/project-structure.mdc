@@ -1,0 +1,22 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Project Structure Guide
+
+This project is a Vue 3 admin UI, organized as follows:
+
+- The main entry point is [src/main.ts](mdc:src/main.ts), which initializes the app and mounts [App.vue](mdc:src/App.vue).
+- Views are organized in [src/views/](mdc:src/views), grouped by domain (e.g., system, crm, erp, etc.).
+- Reusable components are in [src/components/](mdc:src/components), with many subdirectories for specific component types.
+- API modules are in [src/api/](mdc:src/api), also grouped by domain.
+- State management is handled in [src/store/](mdc:src/store), with modules in [src/store/modules/](mdc:src/store/modules).
+- Routing is managed in [src/router/index.ts](mdc:src/router/index.ts) and [src/router/modules/](mdc:src/router/modules).
+- Layouts are in [src/layout/](mdc:src/layout), with the main layout in [src/layout/Layout.vue](mdc:src/layout/Layout.vue).
+- Utility functions are in [src/utils/](mdc:src/utils).
+- Plugins are in [src/plugins/](mdc:src/plugins).
+- Type definitions are in [src/types/](mdc:src/types).
+- Configuration files are in [src/config/](mdc:src/config).
+
+This structure helps keep the codebase modular and maintainable.

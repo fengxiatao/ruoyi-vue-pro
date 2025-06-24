@@ -1,0 +1,141 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Yudao UI Admin Vue3 Development Rules
+
+## Project Structure
+- `src/` contains all source code
+- `src/api/` for API request definitions
+- `src/components/` for reusable Vue components
+- `src/views/` for page components
+- `src/store/` for Pinia state management
+- `src/utils/` for utility functions
+- `src/hooks/` for composable functions
+- `src/router/` for Vue Router configuration
+- `src/assets/` for static resources
+- `src/locales/` for i18n translations
+
+## Vue Component Rules
+
+### File Structure
+```vue
+<script setup lang="ts">
+// Imports
+import { ref, computed } from 'vue'
+import type { PropType } from 'vue'
+
+// Props & Emits
+const props = defineProps({
+  propName: {
+    type: String as PropType<string>,
+    required: true
+  }
+})
+const emit = defineEmits(['update', 'submit'])
+
+// State & Composables
+const state = ref()
+
+// Methods
+const handleEvent = () => {
+  // Implementation
+}
+
+// Computed
+const computedValue = computed(() => {
+  // Implementation
+})
+</script>
+
+<template>
+  <div>
+    <!-- Template content -->
+  </div>
+</template>
+
+<style lang="scss" scoped>
+// Styles
+</style>
+```
+
+### Naming Conventions
+- Component files: PascalCase (e.g., `UserProfile.vue`)
+- Component names: PascalCase
+- Props: camelCase
+- Events: kebab-case
+- Methods: camelCase prefixed with handle/on for event handlers
+- Composables: camelCase prefixed with use (e.g., `useUserState`)
+
+### TypeScript Usage
+- Use TypeScript for all new code
+- Define interfaces for API responses
+- Use type annotations for props and state
+- Leverage Vue's built-in type system
+
+### State Management
+- Use Pinia for global state management
+- Define stores in `src/store` with clear namespacing
+- Use composables for component-level state
+- Persist necessary state using `pinia-plugin-persistedstate`
+
+### API Integration
+- Define API calls in dedicated files under `src/api`
+- Use axios for HTTP requests
+- Handle errors consistently using global error handlers
+- Use proper typing for request/response data
+
+### UI Components
+- Use Element Plus components with proper types
+- Follow the project's design system
+- Implement responsive designs using Element Plus breakpoints
+- Use UnoCSS for utility-first styling
+
+### Performance
+- Lazy load routes and components
+- Use `defineAsyncComponent` for heavy components
+- Implement proper caching strategies
+- Optimize images and assets
+
+### Security
+- Sanitize user input
+- Use CSRF tokens for API requests
+- Implement proper authentication checks
+- Follow XSS prevention best practices
+
+### Testing
+- Write unit tests for critical components
+- Test API integration points
+- Verify component props and events
+- Test state management logic
+
+### Error Handling
+- Use try/catch blocks for async operations
+- Implement global error boundaries
+- Log errors appropriately
+- Show user-friendly error messages
+
+### Internationalization
+- Use Vue I18n for translations
+- Keep translation keys organized
+- Support RTL languages
+- Use number and date formatting utilities
+
+### Accessibility
+- Follow WCAG guidelines
+- Use semantic HTML elements
+- Implement proper ARIA attributes
+- Ensure keyboard navigation works
+
+### Git Practices
+- Follow conventional commits
+- Keep PRs focused and small
+- Write clear commit messages
+- Use feature branches
+
+### Build and Deploy
+- Use proper environment variables
+- Optimize build configuration
+- Implement proper caching strategies
+- Follow CI/CD best practices

@@ -1,0 +1,1 @@
+:deep(.sku-table .current-row) { font-weight: bold; color: white !important; background-color: #1890ff !important; border-left: 4px solid #409eff; transform: scale(1.02); box-shadow: 0 4px 12px rgba(24, 144, 255, 0.4); z-index: 5; transition: all 0.2s; }
