@@ -319,6 +319,34 @@ public class PlaywrightSupplierCrawlerServiceImpl extends ErpSupplierCrawlerServ
     }
 
     /**
+     * 从页面中获取输入框的值，支持两种方式：属性和JavaScript
+     */
+    private String getInputValue(Page page, String selector) {
+        try {
+            // 首先尝试通过属性获取值
+            ElementHandle element = page.querySelector(selector);
+            if (element != null) {
+                String value = element.getAttribute("value");
+                
+                // 如果属性值为空，尝试通过JavaScript获取
+                if (value == null || value.isEmpty()) {
+                    try {
+                        value = page.evaluate("() => document.querySelector('" + selector + "').value").toString();
+                        logger.info("通过JavaScript获取到输入框值: {}", value);
+                    } catch (Exception e) {
+                        logger.warn("通过JavaScript获取输入框值失败: {}", e.getMessage());
+                    }
+                }
+                
+                return value != null ? value : "";
+            }
+        } catch (Exception e) {
+            logger.warn("获取输入框值时出错: {}", e.getMessage());
+        }
+        return "";
+    }
+
+    /**
      * 解析表格行数据为供应商对象
      */
     private ErpSupplierSaveReqVO parseSupplierRow(Page page, ElementHandle row, int index) {
@@ -330,6 +358,97 @@ public class PlaywrightSupplierCrawlerServiceImpl extends ErpSupplierCrawlerServ
             page.waitForLoadState(LoadState.DOMCONTENTLOADED);
             // 再次等待网络请求完成
             page.waitForLoadState(LoadState.NETWORKIDLE);
+            
+            // 查找并解析Spanb1元素中的供应商信息
+            ElementHandle spanb1 = page.querySelector("#Spanb1");
+            if (spanb1 != null) {
+                logger.info("找到Spanb1元素，开始提取供应商信息");
+                
+                // 获取供应商名称（供货信息）
+                String name = getInputValue(page, "#Text2_2");
+                supplier.setName(name);
+                logger.info("提取到供应商名称: {}", name);
+                
+                // 获取线路信息
+                String line = getInputValue(page, "#Text2_3");
+                // 线路是自定义字段，我们可以存储在备注字段中
+                supplier.setRemark("线路: " + line);
+                logger.info("提取到线路信息: {}", line);
+                
+                // 获取下级线路
+                String subLine = getInputValue(page, "#Text2_4");
+                // 将备注信息附加上下级线路
+                String remark = supplier.getRemark();
+                supplier.setRemark(remark + ", 下级线路: " + subLine);
+                logger.info("提取到下级线路: {}", subLine);
+                
+                // 获取联系人
+                String contact = getInputValue(page, "#Text2_5");
+                supplier.setContact(contact);
+                logger.info("提取到联系人: {}", contact);
+                
+                // 获取电话
+                String telephone = getInputValue(page, "#Text2_6");
+                supplier.setTelephone(telephone);
+                logger.info("提取到电话: {}", telephone);
+                
+                // 获取其它信息
+                String other = getInputValue(page, "#Text2_7");
+                // 将其它信息附加到备注
+                remark = supplier.getRemark();
+                supplier.setRemark(remark + ", 其它信息: " + other);
+                logger.info("提取到其它信息: {}", other);
+                
+                // 获取登录ID
+                String loginId = getInputValue(page, "#Text2_8");
+                supplier.setLoginId(loginId);
+                logger.info("提取到登录ID: {}", loginId);
+                
+                // 获取网址
+                String website = getInputValue(page, "#Text2_9");
+                // 网址可以存储在邮箱字段
+                supplier.setEmail(website);
+                logger.info("提取到网址: {}", website);
+                
+                // 获取密码
+                String password = getInputValue(page, "#Text2_10");
+                // 密码信息可以存储在传真字段
+                supplier.setFax(password);
+                logger.info("提取到密码: {}", password);
+                
+                // 获取总计欠款信息
+                ElementHandle totalDebtSpan = page.querySelector("#zongji1");
+                if (totalDebtSpan != null) {
+                    String totalDebtText = totalDebtSpan.textContent().trim();
+                    logger.info("提取到总计欠款文本: {}", totalDebtText);
+                    
+                    // 尝试解析总计欠款数值
+                    try {
+                        // 格式可能是"总计欠款:1234.56"，需要提取数字部分
+                        if (totalDebtText != null && totalDebtText.contains(":")) {
+                            String debtValueStr = totalDebtText.substring(totalDebtText.indexOf(":") + 1).trim();
+                            // 移除可能的非数字字符（除了小数点）
+                            debtValueStr = debtValueStr.replaceAll("[^0-9.]", "");
+                            if (!debtValueStr.isEmpty()) {
+                                BigDecimal debtValue = new BigDecimal(debtValueStr);
+                                // 可以将欠款信息存储在税率字段中
+                                supplier.setTaxPercent(debtValue);
+                                logger.info("成功解析总计欠款金额: {}", debtValue);
+                            }
+                        }
+                    } catch (Exception e) {
+                        logger.warn("解析总计欠款金额时出错: {}", e.getMessage());
+                    }
+                } else {
+                    logger.warn("未找到总计欠款信息元素");
+                }
+                
+                // 设置默认值
+                supplier.setStatus(1); // 默认启用状态
+                supplier.setSort(1); // 默认排序值
+            } else {
+                logger.error("未找到ID为Spanb1的元素，无法提取供应商信息");
+            }
 
             String fileName = String.format("surpriser_%d.png", index);
             page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get(fileName)));
